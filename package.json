@@ -1,0 +1,22 @@
+{
+  "name": "utils-xml2object",
+  "version": "1.0.0",
+  "description": "Extract object from xml file using xpath syntax",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "keywords": [
+    "xml",
+    "xpath"
+  ],
+  "author": "Stan Bienaives",
+  "license": "MIT",
+  "dependencies": {
+    "xmldom": "^0.3.0",
+    "xpath": "0.0.27"
+  },
+  "devDependencies": {
+    "ava": "^3.8.0"
+  }
+}
