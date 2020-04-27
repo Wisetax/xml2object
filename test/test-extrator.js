@@ -93,12 +93,27 @@ test('Should extract raw html (/xml) from one element', (t) => {
     </TITRE>"
 
   const extractor = Obj2Xml.extract(xml, {
-    content: {path: '/TITRE/CONTENT/*', isHtml: true},
+    content: {path: '/TITRE/CONTENT', isHtml: true},
   })
 
-  t.is(extractor.content, '<html> <div attr="attr"> My content <br/> other </div> </html>');
+  t.is(extractor.content.trim(), '<html> <div attr="attr"> My content <br/> other </div> </html>');
 })
 
+test('Should extract bare html (/xml) from one element', (t) => {
+  const xml = "\
+    <TITRE> \
+        <CONTENT>  \
+            somme content outside tag\
+            <div attr='attr'> My content <br/> other </div> </html>\
+        </CONTENT>\
+    </TITRE>"
+
+  const extractor = Obj2Xml.extract(xml, {
+    content: {path: '/TITRE/CONTENT', isHtml: true},
+  })
+
+  t.is(extractor.content.trim(), 'somme content outside tag            <div attr="attr"> My content <br/> other </div>');
+})
 
 test('should extract nested objects', (t) => {
   const xml = "\
@@ -132,6 +147,8 @@ test('should extract nested objects', (t) => {
   ])
 
 })
+
+
 test('should extract single nested objects', (t) => {
   const xml = "\
   <HEAD> \
@@ -142,6 +159,16 @@ test('should extract single nested objects', (t) => {
       </VERSION> \
        <VERSION num='v2'> \
           <ELEM myattr='this is v2'>v2text</ELEM> \
+      </VERSION> \
+    </VERSIONS> \
+  </HEAD>"
+
+  const xml2 = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSIONS> \
+       <VERSION num='v1'> \
+          <ELEM myattr='this is v1'>v1text</ELEM> \
       </VERSION> \
     </VERSIONS> \
   </HEAD>"
@@ -157,7 +184,56 @@ test('should extract single nested objects', (t) => {
     }
   })
 
+  const extractor2 = Obj2Xml.extract(xml2, {
+    myobj: {
+      path: '/HEAD/VERSIONS/VERSION',
+      mapping: {
+        num: '/@num',
+        text: '/ELEM/text()',
+        attr: '/ELEM/@myattr',
+      }
+    }
+  })
+  
+
 
   t.deepEqual(extractor.myobj, {num: 'v1', text: 'v1text', attr: 'this is v1'});
+  t.deepEqual(extractor2.myobj, {num: 'v1', text: 'v1text', attr: 'this is v1'});
+
+})
+
+
+
+test('should extract complex nested objects', (t) => {
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSIONS> \
+       <VERSION num='v1'> \
+          <ELEM myattr='this is v1'><div> this is html content</div></ELEM> \
+      </VERSION> \
+       <VERSION num='v2'> \
+          <ELEM myattr='this is v2'>text <div>this is html 2nd content </div></ELEM> \
+      </VERSION> \
+    </VERSIONS> \
+  </HEAD>"
+
+  const extractor = Obj2Xml.extract(xml, {
+    mycontent: {
+      path: '/HEAD/VERSIONS/VERSION',
+      mapping: {
+        text: {
+          path: '/ELEM',
+          isHtml: true,
+        }
+      }
+    }
+  })
+
+
+  t.deepEqual(extractor.mycontent, [
+    {text: '<div> this is html content</div>'},
+    {text: 'text <div>this is html 2nd content </div>'},
+  ])
 
 })

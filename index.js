@@ -27,6 +27,9 @@ function extractKey(doc, path) {
   if (path.mapping)
     return _extracItemsKey(doc, path);
 
+  if (path.path)
+    return _extractPlainKey(doc, path.path);
+
   throw new Error('Path format not recognized');
 }
 
@@ -43,16 +46,24 @@ function extractNodes(doc, path) {
 function _extracItemsKey(doc, {path, mapping}) {
   const nodes = extractNodes(doc, path);
 
+  
   return _extractValue(nodes, (node, index) => {
     const object = {};
 
     const entries =  Object.entries(mapping);
     for(let i=0; i<entries.length; i++) {
 
-      const nthchild = isNaN(index) ? '' : `[${index+1}]`;
-      const localpath = fspath.join(path + nthchild, entries[i][1])
+      const options =  (typeof entries[i][1] === 'string') ? {path: entries[i][1]} : Object.assign({}, entries[i][1]);
 
-      object[entries[i][0]] = extractKey(node, localpath)
+
+      const nthchild = isNaN(index) ? '' : `[${index+1}]`;
+      const key = entries[i][0];
+
+      const globalPath = fspath.join(path + nthchild, options.path)
+
+      options.path = globalPath;
+
+      object[key] = extractKey(node, options);
     }
 
     return object;
@@ -60,9 +71,19 @@ function _extracItemsKey(doc, {path, mapping}) {
 }
 
 function _extractHtmlKey(doc, path) {
+  // path = fspath.join(path, '*');
   const nodes = extractNodes(doc, path);
 
-  return _extractValue(nodes, (node) => node.toString(true));
+  return _extractValue(nodes, (node) => {
+    const stripTagStart = new RegExp(`^<${node.tagName}[^>]*>`);
+    const stripTagEnd = new RegExp(`</${node.tagName}>$`);
+
+    let innerHtml = node.toString(true);
+    innerHtml = innerHtml.replace(stripTagStart, '')
+    innerHtml = innerHtml.replace(stripTagEnd, '')
+    
+    return innerHtml;
+  });
 }
 
 function _extractPlainKey(doc, path) {
