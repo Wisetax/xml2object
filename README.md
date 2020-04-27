@@ -1,4 +1,5 @@
 # xml2Obj
+![Test](https://github.com/stanBienaives/xml2object/workflows/Test/badge.svg)
 
 xml2obj is a utility that convert a xml document in an object in regard to a given mapping
 
