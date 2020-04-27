@@ -98,3 +98,36 @@ test('Should extract raw html (/xml) from one element', (t) => {
 
   t.is(extractor.content, '<html> <div attr="attr"> My content <br/> other </div> </html>');
 })
+
+
+test('should extract nested objects', (t) => {
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSIONS> \
+       <VERSION num='v1'> \
+          <ELEM myattr='this is v1'>v1text</ELEM> \
+      </VERSION> \
+       <VERSION num='v2'> \
+          <ELEM myattr='this is v2'>v2text</ELEM> \
+      </VERSION> \
+    </VERSIONS> \
+  </HEAD>"
+
+  const extractor = Obj2Xml.extract(xml, {
+    myarray: {
+      path: '/HEAD/VERSIONS/VERSION',
+      mapping: {
+        num: '/@num',
+        text: '/ELEM/text()',
+        attr: '/ELEM/@myattr',
+      }
+    }
+  })
+
+  t.deepEqual(extractor.myarray, [
+    {num: 'v1', text: 'v1text', attr: 'this is v1'},
+    {num: 'v2', text: 'v2text', attr: 'this is v2'},
+  ])
+
+})

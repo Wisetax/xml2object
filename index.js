@@ -1,12 +1,10 @@
 const xpath = require('xpath');
 const dom = require('xmldom').DOMParser;
-const Serializer = require('xmldom').XMLSerializer;
+const fspath = require('path');
 
 
 function extract(xml, mapping) {
   const doc = new dom().parseFromString(xml);
-
-  // console.log(doc.getElementsByClassName('CONTENT'))
 
   const object = {};
 
@@ -25,7 +23,27 @@ function extractKey(doc, path) {
   if (path.isHtml)
     return _extractHtmlKey(doc, path.path);
 
+  if (path.mapping)
+    return _extracItemsKey(doc, path);
+
   throw new Error('Path format not recognized');
+}
+
+function _extracItemsKey(doc, {path, mapping}) {
+  const nodes = xpath.select(path, doc);
+
+  return _extractValue(nodes, (node, index) => {
+    const object = {};
+
+    const entries =  Object.entries(mapping);
+    for(let i=0; i<entries.length; i++) {
+      let localpath = fspath.join(path + `[${index+1}]`, entries[i][1])
+
+      object[entries[i][0]] = extractKey(node, localpath)
+    }
+
+    return object;
+  })
 }
 
 function _extractHtmlKey(doc, path) {
@@ -42,12 +60,12 @@ function _extractPlainKey(doc, path) {
 
 function _extractValue(nodes, func) {
   if (nodes.length === 0)
-    throw new Error('path not found');
+    throw new Error(`No element for this path`);
 
   if (nodes.length == 1)
     return func(nodes[0]) //.nodeValue;
 
-  return nodes.map((node) => func(node));
+  return nodes.map((node, index) => func(node, index));
 }
 
 
