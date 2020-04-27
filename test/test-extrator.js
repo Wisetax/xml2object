@@ -1,5 +1,5 @@
 const test = require('ava');
-const Obj2Xml = require('../index.js');
+const xml2Obj = require('../index.js');
 
 
 test('Simple xpath shoud extract value', (t) => {
@@ -10,7 +10,7 @@ test('Simple xpath shoud extract value', (t) => {
     <VERSION myattr='truc'> nothing </VERSION> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     title: '/HEAD/TITLE/text()',
     attr: '/HEAD/VERSION/@myattr',
   })
@@ -30,7 +30,7 @@ test('Should extract one specified values from array', (t) => {
     </VERSIONS> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     firstVersion: '/HEAD/VERSIONS/VERSION[1]/@num',
     lastVersion: '/HEAD/VERSIONS/VERSION[2]/text()',
   })
@@ -50,7 +50,7 @@ test('Should extract arrays of values', (t) => {
     </VERSIONS> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     versions: '/HEAD/VERSIONS/VERSION//text()',
     versionsNums: '/HEAD/VERSIONS/VERSION//@num',
   })
@@ -74,7 +74,7 @@ test('Should extract arrays of values in intricated balise', (t) => {
     </VERSIONS> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     versions: '/HEAD/VERSIONS/VERSION//ELEM/text()',
     versionsNums: '/HEAD/VERSIONS/VERSION//ELEM/@myattr',
   })
@@ -92,7 +92,7 @@ test('Should extract raw html (/xml) from one element', (t) => {
         </CONTENT>\
     </TITRE>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     content: {path: '/TITRE/CONTENT', isHtml: true},
   })
 
@@ -108,7 +108,7 @@ test('Should extract bare html (/xml) from one element', (t) => {
         </CONTENT>\
     </TITRE>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     content: {path: '/TITRE/CONTENT', isHtml: true},
   })
 
@@ -129,7 +129,7 @@ test('should extract nested objects', (t) => {
     </VERSIONS> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     myarray: {
       path: '/HEAD/VERSIONS/VERSION',
       mapping: {
@@ -173,7 +173,7 @@ test('should extract single nested objects', (t) => {
     </VERSIONS> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     myobj: {
       path: '/HEAD/VERSIONS/VERSION[1]',
       mapping: {
@@ -184,7 +184,7 @@ test('should extract single nested objects', (t) => {
     }
   })
 
-  const extractor2 = Obj2Xml.extract(xml2, {
+  const extractor2 = xml2Obj.extract(xml2, {
     myobj: {
       path: '/HEAD/VERSIONS/VERSION',
       mapping: {
@@ -218,7 +218,7 @@ test('should extract complex nested objects', (t) => {
     </VERSIONS> \
   </HEAD>"
 
-  const extractor = Obj2Xml.extract(xml, {
+  const extractor = xml2Obj.extract(xml, {
     mycontent: {
       path: '/HEAD/VERSIONS/VERSION',
       mapping: {
