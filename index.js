@@ -9,7 +9,7 @@ function extract(xml, mapping) {
   const object = {};
 
   for(const key in mapping) {
-    object[key] = extractKey(doc, mapping[key])
+    object[key] =  extractKey(doc, mapping[key])
   }
 
   return object;
@@ -17,6 +17,7 @@ function extract(xml, mapping) {
 }
 
 function extractKey(doc, path) {
+
   if (typeof path === 'string')
     return _extractPlainKey(doc, path);
   
@@ -29,15 +30,27 @@ function extractKey(doc, path) {
   throw new Error('Path format not recognized');
 }
 
-function _extracItemsKey(doc, {path, mapping}) {
+function extractNodes(doc, path) {
   const nodes = xpath.select(path, doc);
+
+  if (nodes.length === 0)
+    throw new Error(`No element for this path: ${path}`);
+
+  return nodes;
+
+}
+
+function _extracItemsKey(doc, {path, mapping}) {
+  const nodes = extractNodes(doc, path);
 
   return _extractValue(nodes, (node, index) => {
     const object = {};
 
     const entries =  Object.entries(mapping);
     for(let i=0; i<entries.length; i++) {
-      let localpath = fspath.join(path + `[${index+1}]`, entries[i][1])
+
+      const nthchild = isNaN(index) ? '' : `[${index+1}]`;
+      const localpath = fspath.join(path + nthchild, entries[i][1])
 
       object[entries[i][0]] = extractKey(node, localpath)
     }
@@ -47,23 +60,21 @@ function _extracItemsKey(doc, {path, mapping}) {
 }
 
 function _extractHtmlKey(doc, path) {
-  const nodes = xpath.select(path, doc);
+  const nodes = extractNodes(doc, path);
 
   return _extractValue(nodes, (node) => node.toString(true));
 }
 
 function _extractPlainKey(doc, path) {
-  const nodes = xpath.select(path, doc)
+  const nodes = extractNodes(doc, path);
   
   return _extractValue(nodes, (node) => node.nodeValue)
 }
 
 function _extractValue(nodes, func) {
-  if (nodes.length === 0)
-    throw new Error(`No element for this path`);
-
-  if (nodes.length == 1)
-    return func(nodes[0]) //.nodeValue;
+  
+  if (nodes.length === 1)
+    return func(nodes[0])
 
   return nodes.map((node, index) => func(node, index));
 }
