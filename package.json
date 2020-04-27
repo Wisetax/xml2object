@@ -1,7 +1,7 @@
 {
   "name": "utils-xml2object",
   "version": "1.0.0",
-  "description": "Extract object from xml file using xpath syntax",
+  "description": "Extract object from xml using xpath syntax",
   "main": "index.js",
   "scripts": {
     "test": "ava"
@@ -18,5 +18,9 @@
   },
   "devDependencies": {
     "ava": "^3.8.0"
-  }
+  },
+  "engines":
+    {
+      "node" : ">=12.16.2" 
+    } 
 }
