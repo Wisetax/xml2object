@@ -19,6 +19,40 @@ test('Simple xpath shoud extract value', (t) => {
   t.is(extractor.attr, 'truc')
 })
 
+test('Missing key should fail', (t) => {
+
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSION myattr='truc'> nothing </VERSION> \
+  </HEAD>"
+
+  t.throws(() => {
+    return xml2Obj.extract(xml, {
+      title: '/HEAD/TITLMISSINGE/text()',
+      attr: '/HEAD/VERSION/@myattr',
+    })
+  });
+
+  t.notThrows(() => {
+    return xml2Obj.extract(xml, {
+      title: '/HEAD/TITLMISSINGE/text()',
+      attr: '/HEAD/VERSION/@myattr',
+    }, {tolerance: true})
+  })
+
+  const extractor = xml2Obj.extract(xml, {
+      title: '/HEAD/TITLMISSINGE/text()',
+      attr: '/HEAD/VERSION/@myattr',
+    }, {tolerance: true})
+
+  t.is(extractor.title, undefined)
+  
+
+})
+
+
+
 test('Should extract one specified values from array', (t) => {
 
   const xml = "\
@@ -237,3 +271,4 @@ test('should extract complex nested objects', (t) => {
   ])
 
 })
+
