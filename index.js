@@ -70,7 +70,8 @@ class Xlm2Object {
   * @returns {Array{Element}} array of elements
   */
   extractNodes(path) {
-    const nodes = xpath.select(path, this.doc);
+    const select = xpath.useNamespaces(this.options.namespaces);
+    const nodes = select(path, this.doc);
   
     if (nodes.length === 0 && !this.options.tolerance)
       throw new Error(`No element for this path: ${path}`);

@@ -272,3 +272,31 @@ test('should extract complex nested objects', (t) => {
 
 })
 
+
+
+test('it should work with namespaces', (t) => {
+  const xml = "\
+  <HEAD> \
+    <NS1:TITLE xmlns:NS1='NS1ID'> \
+      <NS1:SUBTITLE>My Sub Title</NS1:SUBTITLE> \
+    </NS1:TITLE> \
+    <NS2:TITLE xmlns:NS2='NS2ID'> \
+      <NS2:SUBTITLE>My Sub Title 2</NS2:SUBTITLE> \
+    </NS2:TITLE> \
+    <CONTENT> Content </CONTENT> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    subtitle: '/HEAD/NS1:TITLE/NS1:SUBTITLE/text()',
+    subtitle2: '/HEAD/NS2:TITLE/NS2:SUBTITLE/text()',
+    content: '/HEAD/CONTENT/text()',
+  }, {namespaces: {
+      'NS1': 'NS1ID',
+      'NS2': 'NS2ID',
+    }})
+
+  t.is(extractor.subtitle, 'My Sub Title')
+  t.is(extractor.subtitle2, 'My Sub Title 2')
+  t.is(extractor.content, ' Content ')
+})
+

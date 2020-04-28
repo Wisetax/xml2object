@@ -71,7 +71,7 @@ const xml = "\
 Check the tests for more examples
 
 
-# Strict Mode
+## Strict Mode
 By default all missing throws an error 
 If you want to deactivate this beaviour you can call the extract function with an tolerance parameter
 The missing keys wont appear in the resulting object
@@ -79,6 +79,35 @@ The missing keys wont appear in the resulting object
 ```javascript
  xml2Obj.extract(xml, {...mapping}, {tolerant: true})
 ```
+
+## Namespaces
+Whenever namespaces are used in the document you should specify the name space useds and their ids in the options
+The namespaces and id are specified in the xmls document
+```javascript
+  const xml = "\
+  <HEAD> \
+    <NS1:TITLE xmlns:NS1='NS1ID'> \
+      <NS1:SUBTITLE>My Sub Title</NS1:SUBTITLE> \
+    </NS1:TITLE> \
+    <NS2:TITLE xmlns:NS2='NS2ID'> \
+      <NS2:SUBTITLE>My Sub Title 2</NS2:SUBTITLE> \
+    </NS2:TITLE> \
+    <CONTENT> Content </CONTENT> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    subtitle: '/HEAD/NS1:TITLE/NS1:SUBTITLE/text()',
+    subtitle2: '/HEAD/NS2:TITLE/NS2:SUBTITLE/text()',
+    content: '/HEAD/CONTENT/text()',
+  }, {namespaces: {
+      'NS1': 'NS1ID',
+      'NS2': 'NS2ID',
+    }})
+
+  // returns { subtitle: 'My Sub Title, subtitle2: My Sub title 2 , content: 'Content'}
+```
+
+
 
 
 # TEST
