@@ -139,7 +139,11 @@ class Xlm2Object {
         const nthchild = isNaN(index) ? '' : `[${index+1}]`;
         const key = entries[i][0];
   
-        const globalPath = fspath.join(path + nthchild, options.path)
+        let globalPath = fspath.join(path + nthchild, options.path)
+
+        // Keep relative path
+        if (path.startsWith('//'))
+          globalPath = `/${globalPath}`
   
         options.path = globalPath;
   

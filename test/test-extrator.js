@@ -319,3 +319,38 @@ test('Can apply function to result', (t) => {
   t.is(extractor.title, 'My title')
   t.is(extractor.attr, 'truc')
 });
+
+
+test('should extract complex nested objects with relative path', (t) => {
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSIONS> \
+       <VERSION num='v1'> \
+          <ELEM myattr='this is v1'><div> this is html content</div></ELEM> \
+      </VERSION> \
+       <VERSION num='v2'> \
+          <ELEM myattr='this is v2'>text <div>this is html 2nd content </div></ELEM> \
+      </VERSION> \
+    </VERSIONS> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    mycontent: {
+      path: '//VERSIONS/VERSION',
+      mapping: {
+        text: {
+          path: '/ELEM',
+          isHtml: true,
+        }
+      }
+    }
+  })
+
+
+  t.deepEqual(extractor.mycontent, [
+    {text: '<div> this is html content</div>'},
+    {text: 'text <div>this is html 2nd content </div>'},
+  ])
+
+})
