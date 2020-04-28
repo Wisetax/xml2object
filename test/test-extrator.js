@@ -300,3 +300,22 @@ test('it should work with namespaces', (t) => {
   t.is(extractor.content, ' Content ')
 })
 
+test('Can apply function to result', (t) => {
+
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title; garbage</TITLE> \
+    <VERSION myattr='truc'> nothing </VERSION> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    title: {
+      path: '/HEAD/TITLE/text()',
+      apply: (title) => title.split(';')[0],
+    },
+    attr: '/HEAD/VERSION/@myattr',
+  })
+
+  t.is(extractor.title, 'My title')
+  t.is(extractor.attr, 'truc')
+});

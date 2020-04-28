@@ -107,6 +107,26 @@ The namespaces and id are specified in the xmls document
   // returns { subtitle: 'My Sub Title, subtitle2: My Sub title 2 , content: 'Content'}
 ```
 
+## Apply function to results 
+
+It is possible to apply a function to the result a the key level using the function `apply`
+
+```javascript
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title; garbage</TITLE> \
+    <VERSION myattr='truc'> nothing </VERSION> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    title: {
+      path: '/HEAD/TITLE/text()',
+      apply: (title) => title.split(';')[0],
+    },
+    attr: '/HEAD/VERSION/@myattr',
+  })
+```
+
 
 
 

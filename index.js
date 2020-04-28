@@ -50,17 +50,21 @@ class Xlm2Object {
   
     if (typeof options === 'string')
       options = {path: options}
+
+    const nothing = (anything) => anything;
+
+    const apply  = options.apply || nothing;
     
     if (options.isHtml)
-      return this._extractHtmlKey(options.path);
+      return apply(this._extractHtmlKey(options.path));
   
     if (options.mapping)
-      return this._extracItemsKey(options);
+      return apply(this._extracItemsKey(options));
   
     if (options.path)
-      return this._extractPlainKey(options.path);
+      return apply(this._extractPlainKey(options.path));
   
-      throw new Error('Path format not recognized');
+    throw new Error('Path format not recognized');
   }
   
   /**
