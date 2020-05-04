@@ -51,7 +51,7 @@ class Xlm2Object {
     if (typeof options === 'string')
       options = {path: options}
 
-    const nothing = (anything) => anything;
+    const nothing = (anything) => anything || options.default;
 
     const apply  = options.apply || nothing;
     

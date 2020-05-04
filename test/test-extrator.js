@@ -354,3 +354,26 @@ test('should extract complex nested objects with relative path', (t) => {
   ])
 
 })
+
+
+test('Should handle default value', (t) => {
+
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSIONS> \
+       <VERSION num='v1'>v1text</VERSION> \
+       <VERSION num='v2'>v2text</VERSION> \
+    </VERSIONS> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    firstVersion: {
+      path: '/HEAD/VERSIONS/VERSION[1]/@doesnotexists',
+      default: 'defaultValue',
+    },
+    lastVersion: '/HEAD/VERSIONS/VERSION[2]/text()',
+  }, { tolerance: true })
+
+  t.is(extractor.firstVersion, 'defaultValue')
+})

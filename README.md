@@ -127,6 +127,18 @@ It is possible to apply a function to the result a the key level using the funct
   })
 ```
 
+## Set default to key
+You can set a default value to keys using the syntax below:
+```javascript
+  const extractor = xml2Obj.extract(xml, {
+    title: {
+      path: '/HEAD/TITLE/text()',
+      default: 'value if missing,
+    },
+  }, {tolerance: true})
+```
+
+
 
 
 
