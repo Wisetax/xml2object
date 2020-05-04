@@ -4,7 +4,7 @@
 xml2obj is a utility that convert a xml document in an object in regard to a given mapping
 
 It uses the [xpath](https://en.wikipedia.org/wiki/XPath) syntax. 
-Here is a [helpfull cheatset](https://gist.github.com/LeCoupa/8c305ec8c713aad07b14)
+Here is a [helpfull cheatsheet](https://gist.github.com/LeCoupa/8c305ec8c713aad07b14)
 
 ```javascript
  const xml = "\
@@ -144,7 +144,7 @@ You can set a default value to keys using the syntax below:
   const extractor = xml2Obj.extract(xml, {
     title: {
       path: '/HEAD/TITLE/text()',
-      default: 'value if missing,
+      default: 'value if missing',
     },
   }, {tolerance: true})
 ```
