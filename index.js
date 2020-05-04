@@ -56,13 +56,13 @@ class Xlm2Object {
     const apply  = options.apply || nothing;
     
     if (options.isHtml)
-      return apply(this._extractHtmlKey(options.path));
+      return apply(this._extractHtmlKey(options));
   
     if (options.mapping)
       return apply(this._extracItemsKey(options));
   
     if (options.path)
-      return apply(this._extractPlainKey(options.path));
+      return apply(this._extractPlainKey(options));
   
     throw new Error('Path format not recognized');
   }
@@ -73,11 +73,13 @@ class Xlm2Object {
   * 
   * @returns {Array{Element}} array of elements
   */
-  extractNodes(path) {
+  extractNodes(path, tolerance=false) {
     const select = xpath.useNamespaces(this.options.namespaces);
     const nodes = select(path, this.doc);
   
-    if (nodes.length === 0 && !this.options.tolerance)
+    const isTolerant = this.options.tolerance || tolerance
+    
+    if (nodes.length === 0 && !isTolerant)
       throw new Error(`No element for this path: ${path}`);
   
     return nodes;
@@ -89,8 +91,8 @@ class Xlm2Object {
   * 
   * @return {Array<String> | String} returrn array of extracted texts 
   */
-  _extractPlainKey(path) {
-    const nodes = this.extractNodes(path);
+  _extractPlainKey({path, tolerance=false}) {
+    const nodes = this.extractNodes(path, tolerance);
     
     return this._extractValue(nodes, (node) => node.nodeValue)
   }
@@ -101,8 +103,8 @@ class Xlm2Object {
   * 
   * @return {Array<String> | String} return array of html content or single html content in a string
   */
-  _extractHtmlKey(path) {
-    const nodes = this.extractNodes(path);
+  _extractHtmlKey({path, tolerance=false}) {
+    const nodes = this.extractNodes(path, tolerance);
   
     return this._extractValue(nodes, (node) => {
       const stripTagStart = new RegExp(`^<${node.tagName}[^>]*>`);
@@ -123,8 +125,8 @@ class Xlm2Object {
   * 
   * @return {Array | Object | String}
   */
-  _extracItemsKey({path, mapping}) {
-    const nodes = this.extractNodes(path);
+  _extracItemsKey({path, mapping, tolerance=false}) {
+    const nodes = this.extractNodes(path, tolerance);
   
     
     return this._extractValue(nodes, (node, index) => {

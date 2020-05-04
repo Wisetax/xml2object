@@ -80,6 +80,17 @@ The missing keys wont appear in the resulting object
  xml2Obj.extract(xml, {...mapping}, {tolerant: true})
 ```
 
+You can also set the tolerance at key level:
+```javascript
+  const extractor = xml2Obj.extract(xml, {
+    firstVersion: {
+      path: '/HEAD/VERSIONS/VERSION[1]/@doesnotexists',
+      tolerance: true,
+    },
+  }, { tolerance: false })
+```
+NOTE: if tolerance is set to true at the global level. Tolerance at key level has no effect.
+
 ## Namespaces
 Whenever namespaces are used in the document you should specify the name space useds and their ids in the options
 The namespaces and id are specified in the xmls document

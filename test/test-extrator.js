@@ -377,3 +377,26 @@ test('Should handle default value', (t) => {
 
   t.is(extractor.firstVersion, 'defaultValue')
 })
+
+
+test('Should be able to handle tolerance at key level', (t) => {
+
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title</TITLE> \
+    <VERSIONS> \
+       <VERSION num='v1'>v1text</VERSION> \
+       <VERSION num='v2'>v2text</VERSION> \
+    </VERSIONS> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    firstVersion: {
+      path: '/HEAD/VERSIONS/VERSION[1]/@doesnotexists',
+      tolerance: true,
+    },
+    lastVersion: '/HEAD/VERSIONS/VERSION[2]/text()',
+  }, { tolerance: false })
+
+  t.is(extractor.firstVersion, undefined)
+})
