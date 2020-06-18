@@ -91,10 +91,15 @@ class Xlm2Object {
   * 
   * @return {Array<String> | String} returrn array of extracted texts 
   */
-  _extractPlainKey({path, tolerance=false}) {
+  _extractPlainKey({path, array=false, tolerance=false}) {
     const nodes = this.extractNodes(path, tolerance);
     
-    return this._extractValue(nodes, (node) => node.nodeValue)
+    const value = this._extractValue(nodes, (node) => node.nodeValue)
+
+    if (array && !Array.isArray(value))
+      return [value];
+    
+    return value;
   }
 
   /**
@@ -165,7 +170,7 @@ class Xlm2Object {
 
     if (nodes.length === 0)
       return
-    
+
     if (nodes.length === 1)
       return func(nodes[0])
   

@@ -400,3 +400,21 @@ test('Should be able to handle tolerance at key level', (t) => {
 
   t.is(extractor.firstVersion, undefined)
 })
+
+
+
+test("should be possible to enforce array as a result", (t) => {
+  const xml = "\
+  <HEAD> \
+    <TITLE>My title should be in array</TITLE> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    title: {
+      path: '/HEAD/TITLE/text()',
+      array: true,
+    },
+  })
+  t.deepEqual(extractor.title, ['My title should be in array'])
+  
+})
