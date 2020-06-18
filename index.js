@@ -96,8 +96,13 @@ class Xlm2Object {
     
     const value = this._extractValue(nodes, (node) => node.nodeValue)
 
+    // console.log(value);
+    if (array && !value)
+      return [];
+      
     if (array && !Array.isArray(value))
       return [value];
+
     
     return value;
   }

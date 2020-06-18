@@ -414,7 +414,13 @@ test("should be possible to enforce array as a result", (t) => {
       path: '/HEAD/TITLE/text()',
       array: true,
     },
+    notExists: {
+      path: '/HEAD/TITLE/@doesnotexists',
+      tolerance: true,
+      array: true,
+    }
   })
   t.deepEqual(extractor.title, ['My title should be in array'])
+  t.deepEqual(extractor.notExists, [])
   
 })
