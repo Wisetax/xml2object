@@ -1,6 +1,6 @@
 {
   "name": "utils-xml2object",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Extract object from xml using xpath syntax",
   "main": "index.js",
   "homepage": "https://github.com/stanBienaives/xml2object",
