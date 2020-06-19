@@ -407,12 +407,23 @@ test("should be possible to enforce array as a result", (t) => {
   const xml = "\
   <HEAD> \
     <TITLE>My title should be in array</TITLE> \
+    <VERSIONS> \
+      <VERSION num='1' prev='0'/> \
+    </VERSIONS> \
   </HEAD>"
 
   const extractor = xml2Obj.extract(xml, {
     title: {
       path: '/HEAD/TITLE/text()',
       array: true,
+    },
+    versions: {
+      path: '//HEAD/VERSIONS/VERSION',
+      array: true,
+      mapping: {
+        num: '/@num',
+        prev: '/@prev',
+      }
     },
     notExists: {
       path: '/HEAD/TITLE/@doesnotexists',
@@ -422,5 +433,6 @@ test("should be possible to enforce array as a result", (t) => {
   })
   t.deepEqual(extractor.title, ['My title should be in array'])
   t.deepEqual(extractor.notExists, [])
+  t.is(extractor.versions.length, 1);
   
 })

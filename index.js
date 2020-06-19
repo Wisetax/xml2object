@@ -54,15 +54,25 @@ class Xlm2Object {
     const nothing = (anything) => anything || options.default;
 
     const apply  = options.apply || nothing;
+
+    let transform = (value) => {
+      if (!options.array || Array.isArray(value))
+        return apply(value);
+
+      if (!value)
+        return [];
+
+      return [apply(value)];
+    }
     
     if (options.isHtml)
-      return apply(this._extractHtmlKey(options));
+      return transform(this._extractHtmlKey(options));
   
     if (options.mapping)
-      return apply(this._extracItemsKey(options));
+      return transform(this._extracItemsKey(options));
   
     if (options.path)
-      return apply(this._extractPlainKey(options));
+      return transform(this._extractPlainKey(options));
   
     throw new Error('Path format not recognized');
   }
@@ -96,14 +106,6 @@ class Xlm2Object {
     
     const value = this._extractValue(nodes, (node) => node.nodeValue)
 
-    // console.log(value);
-    if (array && !value)
-      return [];
-      
-    if (array && !Array.isArray(value))
-      return [value];
-
-    
     return value;
   }
 
@@ -161,6 +163,8 @@ class Xlm2Object {
   
         object[key] = this.extractKey(options);
       }
+
+      
   
       return object;
     })
