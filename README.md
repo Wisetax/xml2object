@@ -149,6 +149,40 @@ You can set a default value to keys using the syntax below:
   }, {tolerance: true})
 ```
 
+## Extract trees
+Tree extraction can be done specifiying the name of the recursive node
+the _childrens key will be added when any child is found: 
+
+NOTE: The apply function cannot be used along with tree
+
+```javascript
+  const xml = "<HEAD> \
+    <TITLE>My title</TITLE> \
+    <NAV> \
+      <ITEM num='1' name='parent'> \
+        <ITEM num='11' name='child'> \
+          <ITEM num='111' name='child'> </ITEM> \
+        </ITEM> \
+      </ITEM> \
+      <ITEM num='2' name='parent'> \
+        <ITEM num='21' name='child'> </ITEM> \
+        <ITEM num='22' name='child'> </ITEM> \
+      </ITEM> \
+    </NAV> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    docs: {
+      path: "//HEAD/NAV/ITEM",
+      tree: 'ITEM',
+      tolerance: true,
+      mapping: {
+        num: '/@num',
+        name: '/@name',
+      }
+    }
+  }
+```
 
 
 

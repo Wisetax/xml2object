@@ -436,3 +436,38 @@ test("should be possible to enforce array as a result", (t) => {
   t.is(extractor.versions.length, 1);
   
 })
+
+
+test('should extract recursive tree', (t) => {
+  const xml = "<HEAD> \
+    <TITLE>My title</TITLE> \
+    <NAV> \
+      <ITEM num='1' name='parent'> \
+        <ITEM num='11' name='child'> \
+          <ITEM num='111' name='child'> </ITEM> \
+        </ITEM> \
+      </ITEM> \
+      <ITEM num='2' name='parent'> \
+        <ITEM num='21' name='child'> </ITEM> \
+        <ITEM num='22' name='child'> </ITEM> \
+      </ITEM> \
+    </NAV> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    docs: {
+      path: "//HEAD/NAV/ITEM",
+      tree: 'ITEM',
+      tolerance: true,
+      mapping: {
+        num: '/@num',
+        name: '/@name',
+      }
+    }
+  })
+
+
+  t.is(extractor.docs.length, 2)
+  t.is(extractor.docs[0]._childrens.length, 1)
+
+});

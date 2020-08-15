@@ -51,6 +51,9 @@ class Xlm2Object {
     if (typeof options === 'string')
       options = {path: options}
 
+    if (options.tree && options.apply)
+      throw new Error('Apply cannot be used with tree')
+
     const nothing = (anything) => anything || options.default;
 
     const apply  = options.apply || nothing;
@@ -137,7 +140,7 @@ class Xlm2Object {
   * 
   * @return {Array | Object | String}
   */
-  _extracItemsKey({path, mapping, tolerance=false}) {
+  _extracItemsKey({path, mapping, tolerance=false, tree}) {
     const nodes = this.extractNodes(path, tolerance);
   
     
@@ -145,12 +148,12 @@ class Xlm2Object {
       const object = {};
   
       const entries =  Object.entries(mapping);
+      const nthchild = isNaN(index) ? '' : `[${index+1}]`;
       for(let i=0; i<entries.length; i++) {
   
         const options =  (typeof entries[i][1] === 'string') ? {path: entries[i][1]} : Object.assign({}, entries[i][1]);
   
   
-        const nthchild = isNaN(index) ? '' : `[${index+1}]`;
         const key = entries[i][0];
   
         let globalPath = fspath.join(path + nthchild, options.path)
@@ -160,11 +163,22 @@ class Xlm2Object {
           globalPath = `/${globalPath}`
   
         options.path = globalPath;
-  
+
         object[key] = this.extractKey(options);
+
+
       }
 
-      
+
+      if (tree) {
+        const reccursivePath = fspath.join(path + nthchild, tree)
+        const _childrens = this._extracItemsKey({path: reccursivePath, mapping, tolerance: true, tree})
+
+
+        if (_childrens)
+          object._childrens = Array.isArray(_childrens) ? _childrens : [_childrens];
+      }
+
   
       return object;
     })
