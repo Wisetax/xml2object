@@ -471,3 +471,23 @@ test('should extract recursive tree', (t) => {
   t.is(extractor.docs[0]._childrens.length, 1)
 
 });
+
+test('Self closing elements should be supported', (t) => {
+
+  const xml = "\
+<HEAD> \
+  <TITLE>My title</TITLE> \
+  <VERSION> qspdokqsdpokqs </VERSION>\
+</HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+      title: '/HEAD/TITLE/text()',
+      version: {
+        path: '/HEAD/VERSION',
+        default: '',
+      }
+  })
+
+  t.is(extractor.title, 'My title')
+  t.is(extractor.version, '')
+})
