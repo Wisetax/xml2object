@@ -33,7 +33,7 @@ class Xlm2Object {
   
     for(const key in this.mapping) {
       const extraction = this.extractKey(this.mapping[key])
-      if (extraction)
+      if (extraction !== undefined)
         object[key] = extraction;
     }
   
@@ -73,7 +73,7 @@ class Xlm2Object {
   
     if (options.mapping)
       return transform(this._extracItemsKey(options));
-  
+
     if (options.path)
       return transform(this._extractPlainKey(options));
   
@@ -89,7 +89,7 @@ class Xlm2Object {
   extractNodes(path, tolerance=false) {
     const select = xpath.useNamespaces(this.options.namespaces);
     const nodes = select(path, this.doc);
-  
+
     const isTolerant = this.options.tolerance || tolerance
     
     if (nodes.length === 0 && !isTolerant)
@@ -106,7 +106,7 @@ class Xlm2Object {
   */
   _extractPlainKey({path, array=false, tolerance=false}) {
     const nodes = this.extractNodes(path, tolerance);
-    
+
     const value = this._extractValue(nodes, (node) => node.nodeValue)
 
     return value;
