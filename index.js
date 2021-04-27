@@ -1,10 +1,12 @@
 const xpath = require('xpath');
 const dom = require('xmldom').DOMParser;
 const fspath = require('path');
+const libxmljs = require('libxmljs')
+
 
 class Xlm2Object {
   constructor(xml, mapping, options={}) {
-    this.doc = new dom().parseFromString(xml);
+    this.parser = libxmljs.parseXml(xml, { noblanks: true, noerror: true });
     this.mapping = mapping;
     this.options = options;
   }
@@ -87,12 +89,11 @@ class Xlm2Object {
   * @returns {Array{Element}} array of elements
   */
   extractNodes(path, tolerance=false) {
-    const select = xpath.useNamespaces(this.options.namespaces);
-    const nodes = select(path, this.doc);
+    const nodes = this.parser.find(path, this.options.namespaces)
 
     const isTolerant = this.options.tolerance || tolerance
     
-    if (nodes.length === 0 && !isTolerant)
+    if (!isTolerant && nodes.length === 0)
       throw new Error(`No element for this path: ${path}`);
   
     return nodes;
@@ -107,7 +108,11 @@ class Xlm2Object {
   _extractPlainKey({path, array=false, tolerance=false}) {
     const nodes = this.extractNodes(path, tolerance);
 
-    const value = this._extractValue(nodes, (node) => node.nodeValue)
+    const value = this._extractValue(nodes, (node) => {
+      if (node.type() ==  'attribute')
+        return node.value();
+      return node.text();
+    })
 
     return value;
   }
@@ -122,10 +127,10 @@ class Xlm2Object {
     const nodes = this.extractNodes(path, tolerance);
   
     return this._extractValue(nodes, (node) => {
-      const stripTagStart = new RegExp(`^<${node.tagName}[^>]*>`);
-      const stripTagEnd = new RegExp(`</${node.tagName}>$`);
+      const stripTagStart = new RegExp(`^<${node.name()}[^>]*>`);
+      const stripTagEnd = new RegExp(`</${node.name()}>$`);
   
-      let innerHtml = node.toString(true);
+      let innerHtml = node.toString();
       innerHtml = innerHtml.replace(stripTagStart, '')
       innerHtml = innerHtml.replace(stripTagEnd, '')
       
