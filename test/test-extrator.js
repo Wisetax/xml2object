@@ -492,3 +492,25 @@ test('Empty string should be supported as default value', (t) => {
   t.is(extractor.title, 'My title')
   t.is(extractor.version, '')
 });
+
+
+
+test('should parse incomplete html', (t) => {
+  const xml = "\
+    <html> \
+      <a href='coucou' /> \
+      <div> <div> not closed </div> \
+      <div id='1'> \
+        <span>content</span> \
+      </div> \
+    </html>"
+  
+  const extractor = xml2Obj.extract(xml, {
+    href: '//a/@href',
+    content: '//div/span/text()',
+  }, { html: true})
+
+  t.is(extractor.href, 'coucou')
+  t.is(extractor.content, 'content')
+
+})

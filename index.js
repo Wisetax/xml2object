@@ -4,7 +4,10 @@ const libxmljs = require('libxmljs')
 
 class Xlm2Object {
   constructor(xml, mapping, options={}) {
-    this.parser = libxmljs.parseXml(xml, { noblanks: true, noerror: true });
+    if (options.html)
+      this.parser = libxmljs.parseHtmlFragment(xml, {noblanks: true})
+    else
+      this.parser = libxmljs.parseXml(xml, { noblanks: true, noerror: true });
     this.mapping = mapping;
     this.options = options;
   }
