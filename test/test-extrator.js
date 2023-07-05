@@ -468,7 +468,6 @@ test('should extract recursive tree', (t) => {
 
 
   t.is(extractor.docs.length, 2)
-  console.log(JSON.stringify(extractor.docs, null, 4))
   t.is(extractor.docs[0]._childrens.length, 1)
 });
 

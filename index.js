@@ -5,9 +5,9 @@ const libxmljs = require('libxmljs')
 class Xlm2Object {
   constructor(xml, mapping, options={}) {
     if (options.html)
-      this.parser = libxmljs.parseHtml(xml, {noblanks: true})
+      this.parser = libxmljs.parseHtml(xml, {preserveWhitespace: false})
     else
-      this.parser = libxmljs.parseXml(xml, { noblanks: true, noerror: true });
+      this.parser = libxmljs.parseXml(xml, { preserveWhitespace: false, noerror: true });
     this.mapping = mapping;
     this.options = options;
   }
@@ -90,7 +90,6 @@ class Xlm2Object {
   * @returns {Array{Element}} array of elements
   */
   extractNodes(path, tolerance=false) {
-    console.log(path);
     const nodes = this.parser.find(path, this.options.namespaces)
 
     const isTolerant = this.options.tolerance || tolerance
@@ -179,7 +178,6 @@ class Xlm2Object {
 
       if (tree) {
         const reccursivePath = fspath.join(path + nthchild, tree)
-        console.log('recursive', reccursivePath);
         const _childrens = this._extracItemsKey({path: reccursivePath, mapping, tolerance: true, tree})
 
 
