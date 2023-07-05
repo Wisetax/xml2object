@@ -112,7 +112,14 @@ class Xlm2Object {
     const value = this._extractValue(nodes, (node) => {
       if (node.type() ==  'attribute')
         return node.value();
-      return node.text();
+
+      if (node.text)
+        return node.text();
+
+      if (node.type() == 'cdata')
+        return node._ref.content;
+
+      return node.toString();
     })
 
     return value;
