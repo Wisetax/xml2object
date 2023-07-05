@@ -458,7 +458,7 @@ test('should extract recursive tree', (t) => {
     docs: {
       path: "//HEAD/NAV/ITEM",
       tree: 'ITEM',
-      tolerance: true,
+      tolerance: false,
       mapping: {
         num: '/@num',
         name: '/@name',
@@ -468,9 +468,47 @@ test('should extract recursive tree', (t) => {
 
 
   t.is(extractor.docs.length, 2)
+  console.log(JSON.stringify(extractor.docs, null, 4))
   t.is(extractor.docs[0]._childrens.length, 1)
-
 });
+
+test('should extract recursive tree with nested patterns', (t) => {
+  const xml = "<HEAD> \
+    <TITLE>My title</TITLE> \
+    <NAV> \
+      <PARENT><ITEM num='1' name='parent'> \
+        <PARENT><ITEM num='11' name='child'> \
+          <PARENT><ITEM num='111' name='child'> </ITEM></PARENT> \
+        </ITEM></PARENT> \
+      </ITEM></PARENT> \
+      <PARENT><ITEM num='2' name='parent'> \
+        <PARENT><ITEM num='21' name='child'> </ITEM></PARENT> \
+        <PARENT><ITEM num='22' name='child'> </ITEM></PARENT> \
+      </ITEM></PARENT> \
+    </NAV> \
+  </HEAD>"
+
+  const extractor = xml2Obj.extract(xml, {
+    docs: {
+      path: "//HEAD/NAV/PARENT",
+      tree: '/ITEM/PARENT',
+      tolerance: false,
+      mapping: {
+        num: '/ITEM/@num',
+        name: '/ITEM/@name',
+      }
+    }
+  })
+
+
+  t.is(extractor.docs.length, 2)
+
+  // console.log(JSON.stringify(extractor.docs, null, 4))
+  t.is(extractor.docs[0]._childrens.length, 1)
+  t.is(extractor.docs[1]._childrens.length, 2)
+});
+
+
 
 test('Empty string should be supported as default value', (t) => {
 
