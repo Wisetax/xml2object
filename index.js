@@ -1,5 +1,5 @@
 const fspath = require('path');
-const libxmljs = require('libxmljs')
+const libxmljs = require('libxmljs2')
 
 
 class Xlm2Object {

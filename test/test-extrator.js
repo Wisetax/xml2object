@@ -130,7 +130,7 @@ test('Should extract raw html (/xml) from one element', (t) => {
     content: {path: '/TITRE/CONTENT', isHtml: true},
   })
 
-  t.is(extractor.content.trim(), '<html><div attr="attr"> My content <br/> other </div></html>');
+  t.is(extractor.content.trim(), '<html> <div attr="attr"> My content <br/> other </div> </html>');
 })
 
 test('Should extract bare html (/xml) from one element', (t) => {
